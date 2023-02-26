@@ -22,17 +22,17 @@ class Feed extends Component {
   };
 
   componentDidMount() {
-    // fetch('http://localhost:3000/posts')
-    //   .then(res => {
-    //     if (res.status !== 200) {
-    //       throw new Error('Failed to fetch user status.');
-    //     }
-    //     return res.json();
-    //   })
-    //   .then(resData => {
-    //     this.setState({ status: resData.status });
-    //   })
-    //   .catch(this.catchError);
+    fetch('http://localhost:3001/posts')
+      .then(res => {
+        if (res.status !== 200) {
+          throw new Error('Failed to fetch user status.');
+        }
+        return res.json();
+      })
+      .then(resData => {
+        this.setState({ status: resData.status });
+      })
+      .catch(this.catchError);
 
     this.loadPosts();
   }
@@ -50,7 +50,7 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch("http://localhost:3000/posts")
+    fetch("http://localhost:3001/posts")
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");
@@ -69,7 +69,7 @@ class Feed extends Component {
 
   statusUpdateHandler = (event) => {
     event.preventDefault();
-    fetch("http://localhost:3000/posts")
+    fetch("http://localhost:3001/posts")
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Can't update status!");
@@ -106,10 +106,11 @@ class Feed extends Component {
       editLoading: true,
     });
     // Set up data (with image!)
-    let url = "http://localhost:3000/posts";
+    let url = "http://localhost:3001/posts";
     if (this.state.editPost) {
-      url = "http://localhost:3000/posts";
+      url = "http://localhost:3001/posts/" + postData._id;
     }
+  
     fetch(url, {
       method: "POST",
       headers: { "Content-type": "Application/json" },
@@ -245,11 +246,11 @@ class Feed extends Component {
               currentPage={this.state.postPage}
             >
               {this.state.posts.map(
-                ({ _id, name, createdAt, title, image, content }) => (
+                ({ _id, creator, createdAt, title, image, content }) => (
                   <Post
                     key={_id}
                     id={_id}
-                    author={name}
+                    author={creator}
                     date={new Date(createdAt).toLocaleDateString("en-US")}
                     title={title}
                     image={image}

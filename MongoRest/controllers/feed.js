@@ -9,7 +9,18 @@ exports.getFeed = (req, res) => {
 };
 
 exports.postFeed = (req, res, next) => {
+  console.log(req.body);
   Feed.create(req.body)
+    .then((response) => {
+      res.status(201).send(JSON.stringify(response));
+      next();
+    })
+    .catch((error) => console.log("error :", error));
+};
+
+exports.editFeed = (req, res, next) => {
+  const { postId } = req.params;
+  Feed.findOneAndUpdate({ _id: postId }, req.body)
     .then((response) => {
       res.status(201).send(JSON.stringify(response));
       next();
