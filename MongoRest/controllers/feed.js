@@ -18,6 +18,16 @@ exports.postFeed = (req, res, next) => {
     .catch((error) => console.log("error :", error));
 };
 
+exports.getPost = (req, res, next) => {
+  const { postId } = req.params;
+  // Feed.findOne({ _id: postId })
+  //   .then((response) => {
+  //     res.status(200).send(JSON.stringify(response));
+  //     next();
+  //   })
+  //   .catch((error) => console.log("error :", error));
+};
+
 exports.editFeed = (req, res, next) => {
   const { postId } = req.params;
   Feed.findOneAndUpdate({ _id: postId }, req.body)
