@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const { User } = require("../models/user");
+const { errorHandler } = require("../utils/errorHandler");
 const { generateAccessToken } = require("../utils/generate-access-token");
 const {
   validateUserPassword,
@@ -7,6 +8,12 @@ const {
 } = require("../utils/validateUser");
 
 exports.signUp = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation failed!", errors: errors.array() });
+  }
   const { name, password, email } = req.body;
   createUserPassword(password)
     .then((hash) => {
@@ -17,10 +24,16 @@ exports.signUp = (req, res, next) => {
       res.status(201).send(JSON.stringify(response));
       next();
     })
-    .catch((error) => console.log("error :", error));
+    .catch((err) => errorHandler(err, next));
 };
 
 exports.login = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation failed!", errors: errors.array() });
+  }
   const { password, email } = req.body;
   let userId;
   User.findOne({ email })
@@ -39,5 +52,5 @@ exports.login = (req, res, next) => {
         next();
       }
     })
-    .catch((error) => console.log("error :", error));
+    .catch((err) => errorHandler(err, next));
 };

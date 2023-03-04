@@ -14,7 +14,7 @@ class SinglePost extends Component {
 
   componentDidMount() {
     const postId = this.props.match.params.postId;
-    fetch("http://localhost:3001/posts/" + postId)
+    fetch("http://localhost:3001/feed/posts/" + postId)
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch status");
@@ -35,6 +35,7 @@ class SinglePost extends Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <section className="single-post">
         <h1>{this.state.title}</h1>

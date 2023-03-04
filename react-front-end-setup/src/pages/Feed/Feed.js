@@ -22,14 +22,14 @@ class Feed extends Component {
   };
 
   componentDidMount() {
-    fetch('http://localhost:3001/posts')
-      .then(res => {
+    fetch("http://localhost:3001/feed/posts")
+      .then((res) => {
         if (res.status !== 200) {
-          throw new Error('Failed to fetch user status.');
+          throw new Error("Failed to fetch user status.");
         }
         return res.json();
       })
-      .then(resData => {
+      .then((resData) => {
         this.setState({ status: resData.status });
       })
       .catch(this.catchError);
@@ -50,7 +50,7 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch("http://localhost:3001/posts")
+    fetch("http://localhost:3001/feed/posts")
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");
@@ -69,7 +69,7 @@ class Feed extends Component {
 
   statusUpdateHandler = (event) => {
     event.preventDefault();
-    fetch("http://localhost:3001/posts")
+    fetch("http://localhost:3001/feed/posts")
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Can't update status!");
@@ -106,19 +106,18 @@ class Feed extends Component {
       editLoading: true,
     });
     // Set up data (with image!)
-    let url = "http://localhost:3001/posts";
+    const formData = new FormData();
+    formData.append("title", postData.title);
+    formData.append("image", postData.image);
+    formData.append("content", postData.content);
+
+    let url = "http://localhost:3001/feed/posts";
     if (this.state.editPost) {
-      url = "http://localhost:3001/posts/" + postData._id;
+      url = "http://localhost:3001/feed/posts/" + postData._id;
     }
-  
     fetch(url, {
       method: "POST",
-      headers: { "Content-type": "Application/json" },
-      body: JSON.stringify({
-        ...postData,
-        creator: "Dayaha",
-        image: "teemporaryimagge",
-      }),
+      body: formData,
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
@@ -127,6 +126,7 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
+        console.log(resData);
         const post = {
           _id: resData._id,
           title: resData.title,

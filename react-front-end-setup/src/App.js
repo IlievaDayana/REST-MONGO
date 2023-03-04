@@ -63,7 +63,7 @@ class App extends Component {
     data.append("email", email);
     data.append("password", password);
     this.setState({ authLoading: true });
-    fetch("http://localhost:3001/login", { method: "POST", body: data })
+    fetch("http://localhost:3001/auth/login", { method: "POST", body: data })
       .then((res) => {
         if (res.status === 422) {
           throw new Error("Validation failed.");
@@ -108,7 +108,7 @@ class App extends Component {
     data.append("email", email.value);
     data.append("password", password.value);
     this.setState({ authLoading: true });
-    fetch("http://localhost:3001/sign-up", { method: "POST", body: data })
+    fetch("http://localhost:3001/auth/sign-up", { method: "POST", body: data })
       .then((res) => {
         if (res.status === 422) {
           throw new Error(
