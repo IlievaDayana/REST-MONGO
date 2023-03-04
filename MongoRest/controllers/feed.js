@@ -10,6 +10,20 @@ exports.getFeed = (req, res) => {
   });
 };
 
+exports.getPost = (req, res, next) => {
+  const { postId } = req.params;
+  Feed.findOne({ _id: postId })
+    .then((response) => {
+      if (!response) {
+        const error = new Error("no post found");
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).send(JSON.stringify(response));
+    })
+    .catch((err) => errorHandler(err, next));
+};
+
 exports.postFeed = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -31,20 +45,6 @@ exports.postFeed = (req, res, next) => {
     .catch((err) => errorHandler(err, next));
 };
 
-exports.getPost = (req, res, next) => {
-  const { postId } = req.params;
-  Feed.findOne({ _id: postId })
-    .then((response) => {
-      if (!response) {
-        const error = new Error("no post found");
-        error.statusCode = 404;
-        throw error;
-      }
-      res.status(200).send(JSON.stringify(response));
-    })
-    .catch((err) => errorHandler(err, next));
-};
-
 exports.editFeed = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -56,7 +56,22 @@ exports.editFeed = (req, res, next) => {
   Feed.findOneAndUpdate({ _id: postId }, req.body)
     .then((response) => {
       res.status(201).send(JSON.stringify(response));
-      next();
     })
     .catch((err) => errorHandler(err, next));
 };
+
+exports.deletePost = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation failed!", errors: errors.array() });
+  }
+  const { postId } = req.params;
+  Feed.deleteOne({ _id: postId })
+    .then((response) => {
+      res.status(200).send(JSON.stringify({message:'deleted successfully'}));
+    })
+    .catch((err) => errorHandler(err, next));
+};
+

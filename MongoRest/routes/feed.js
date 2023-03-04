@@ -1,5 +1,11 @@
 const express = require("express");
-const { getFeed, getPost, postFeed, editFeed } = require("../controllers/feed");
+const {
+  getFeed,
+  getPost,
+  postFeed,
+  editFeed,
+  deletePost,
+} = require("../controllers/feed");
 const router = express.Router();
 const cors = require("cors");
 const { body } = require("express-validator");
@@ -26,5 +32,7 @@ router.post(
   body("creator").trim().isString().isLength({ min: 5 }),
   editFeed
 );
+
+router.delete("/posts/:postId", deletePost);
 
 module.exports = router;
