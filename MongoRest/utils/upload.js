@@ -9,8 +9,9 @@ const storage = multer.diskStorage({
     callback(null, "public/my-images");
   },
   filename: function (req, file, callback) {
-    console.log(file);
-    callback(null, getRandomInt(0, 1000) + file.originalname);
+    const filename = getRandomInt(0, 1000) + file.originalname;
+    callback(null, filename);
+    req.body.image = "http://localhost:3001/static/my-images/" + filename;
   },
 });
 

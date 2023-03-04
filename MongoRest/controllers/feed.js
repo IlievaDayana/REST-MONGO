@@ -17,16 +17,16 @@ exports.postFeed = (req, res, next) => {
       .status(422)
       .json({ message: "Validation failed!", errors: errors.array() });
   }
-  if (!req.file) {
+
+  if (!req.body.image) {
     const error = new Error("no file is uploaded");
     error.statusCode = 422;
     throw error;
   }
-  console.log(req.body);
+
   Feed.create(req.body)
     .then((response) => {
       res.status(201).send(JSON.stringify(response));
-      next();
     })
     .catch((err) => errorHandler(err, next));
 };

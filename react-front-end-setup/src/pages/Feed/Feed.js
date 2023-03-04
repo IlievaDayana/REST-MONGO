@@ -110,6 +110,7 @@ class Feed extends Component {
     formData.append("title", postData.title);
     formData.append("image", postData.image);
     formData.append("content", postData.content);
+    formData.append("creator", this.props.userId);
 
     let url = "http://localhost:3001/feed/posts";
     if (this.state.editPost) {
