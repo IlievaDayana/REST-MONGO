@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { Feed } = require("../models/feed");
 const { errorHandler } = require("../utils/errorHandler");
+var fs = require("fs");
 
 exports.getFeed = (req, res) => {
   Feed.find().then((data) => {
@@ -68,10 +69,20 @@ exports.deletePost = (req, res, next) => {
       .json({ message: "Validation failed!", errors: errors.array() });
   }
   const { postId } = req.params;
-  Feed.deleteOne({ _id: postId })
+
+  Feed.findOneAndDelete({ _id: postId })
     .then((response) => {
-      res.status(200).send(JSON.stringify({message:'deleted successfully'}));
+      const { image } = response;
+      let imageName = image.split("/").reverse()[0];
+      return fs.unlink("public/my-images/" + imageName, (err) => {
+        if (err) {
+          throw new Error("could not delete image");
+        }
+        console.log("deleted succesfully");
+      });
+    })
+    .then(() => {
+      res.status(200).send(JSON.stringify({ message: "deleted successfully" }));
     })
     .catch((err) => errorHandler(err, next));
 };
-
