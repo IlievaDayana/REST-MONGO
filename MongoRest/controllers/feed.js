@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const { Feed } = require("../models/feed");
 const { errorHandler } = require("../utils/errorHandler");
 var fs = require("fs");
+const { User } = require("../models/user");
 
 exports.getFeed = (req, res) => {
   const perPage = 2;
@@ -49,10 +50,22 @@ exports.postFeed = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-
+  let newPost;
   Feed.create(req.body)
-    .then((response) => {
-      res.status(201).send(JSON.stringify(response));
+    .then((feed) => feed)
+    .then((createdFeed) => {
+      newPost = createdFeed;
+      return User.findById(req.body.creator).then((user) => {
+        if (!user) {
+          const err = new Error("No user found");
+          throw err;
+        }
+        user.posts.push(createdFeed);
+        user.save()
+      });
+    })
+    .then(() => {
+      res.status(201).send(JSON.stringify(newPost));
     })
     .catch((err) => errorHandler(err, next));
 };

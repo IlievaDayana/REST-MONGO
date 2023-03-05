@@ -12,10 +12,11 @@ const { body } = require("express-validator");
 const { authenticateUser } = require("../middlewaares/auth");
 
 router.get("/posts", authenticateUser, getFeed);
-router.get("/posts/:postId",authenticateUser, getPost);
+router.get("/posts/:postId", authenticateUser, getPost);
 
 router.post(
-  "/posts",authenticateUser,
+  "/posts",
+  authenticateUser,
   body("title").trim().isString().isLength({ min: 5 }),
   body("content").trim().isString().isLength({ min: 5 }),
   body("image").trim().isString().isLength({ min: 5 }),
@@ -26,7 +27,8 @@ router.post(
 router.options("/posts/:postId", cors());
 
 router.post(
-  "/posts/:postId",authenticateUser,
+  "/posts/:postId",
+  authenticateUser,
   body("title").trim().isString().isLength({ min: 5 }),
   body("content").trim().isString().isLength({ min: 5 }),
   body("image").trim().isString().isLength({ min: 5 }),

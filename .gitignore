@@ -1,4 +1,5 @@
 MongoRest/node_modules/*
+MongoRest/public/*
 react-front-end-setup/node_modules/*
 
 react-front-end-setup/node_modules/.package-lock.json

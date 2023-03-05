@@ -17,12 +17,11 @@ exports.signUp = (req, res, next) => {
   const { name, password, email } = req.body;
   createUserPassword(password)
     .then((hash) => {
-      return User.create({ name, password: hash, email });
+      return User.create({ name, password: hash, email,status:'hardcodedstatus' });
     })
     .then((response) => generateAccessToken(response.email))
     .then((response) => {
       res.status(201).send(JSON.stringify(response));
-      next();
     })
     .catch((err) => errorHandler(err, next));
 };
