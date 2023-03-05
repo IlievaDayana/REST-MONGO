@@ -51,7 +51,7 @@ class Feed extends Component {
       this.setState({ postPage: page });
     }
     fetch("http://localhost:3001/feed/posts?page=" + this.state.postPage, {
-      headers: { Authentication: `Bearer ${localStorage.getItem('token')}` },
+      headers: { Authentication: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => {
         if (res.status !== 200) {
@@ -71,7 +71,9 @@ class Feed extends Component {
 
   statusUpdateHandler = (event) => {
     event.preventDefault();
-    fetch("http://localhost:3001/feed/posts")
+    fetch("http://localhost:3001/feed/posts", {
+      headers: { Authentication: `Bearer ${localStorage.getItem("token")}` },
+    })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Can't update status!");
@@ -120,6 +122,7 @@ class Feed extends Component {
     fetch(url, {
       method: "POST",
       body: formData,
+      headers: { Authentication: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
@@ -173,7 +176,10 @@ class Feed extends Component {
 
   deletePostHandler = (postId) => {
     this.setState({ postsLoading: true });
-    fetch("http://localhost:3001/feed/posts/" + postId, { method: "delete" })
+    fetch("http://localhost:3001/feed/posts/" + postId, {
+      method: "delete",
+      Authentication: `Bearer ${localStorage.getItem("token")}`,
+    })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Deleting a post failed!");

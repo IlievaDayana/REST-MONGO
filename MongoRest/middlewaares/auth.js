@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-exports.authenticateToken = (req, res, next) => {
+exports.authenticateUser = (req, res, next) => {
   const authHeader = req.headers["authentication"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401);
