@@ -50,7 +50,7 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch("http://localhost:3001/feed/posts")
+    fetch("http://localhost:3001/feed/posts?page=" + this.state.postPage)
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");
@@ -60,7 +60,7 @@ class Feed extends Component {
       .then((resData) => {
         this.setState({
           posts: resData.posts,
-          totalPosts: resData.totalItems,
+          totalPosts: resData.totalPosts,
           postsLoading: false,
         });
       })
@@ -126,7 +126,6 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
         const post = {
           _id: resData._id,
           title: resData.title,

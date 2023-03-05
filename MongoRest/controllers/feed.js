@@ -4,11 +4,22 @@ const { errorHandler } = require("../utils/errorHandler");
 var fs = require("fs");
 
 exports.getFeed = (req, res) => {
-  Feed.find().then((data) => {
-    return res
-      .status(200)
-      .send(JSON.stringify({ posts: data, totalPosts: data.length }));
-  });
+  const perPage = 2;
+  const currPage = req?.query?.page;
+  let totalItems;
+  Feed.countDocuments()
+    .then((count) => {
+      totalItems = count;
+      return Feed.find()
+        .skip((currPage - 1) * perPage)
+        .limit(perPage);
+    })
+    .then((data) => {
+      res
+        .status(200)
+        .send(JSON.stringify({ posts: data, totalPosts: totalItems }));
+    })
+    .catch((err) => errorHandler(err, next));
 };
 
 exports.getPost = (req, res, next) => {
@@ -56,7 +67,7 @@ exports.editFeed = (req, res, next) => {
   const { postId } = req.params;
   Feed.findOneAndUpdate({ _id: postId }, req.body)
     .then((response) => {
-      res.status(201).send(JSON.stringify(response));
+      res.status(201).json({ message: "updated sucessfully" });
     })
     .catch((err) => errorHandler(err, next));
 };
@@ -69,20 +80,27 @@ exports.deletePost = (req, res, next) => {
       .json({ message: "Validation failed!", errors: errors.array() });
   }
   const { postId } = req.params;
-
   Feed.findOneAndDelete({ _id: postId })
     .then((response) => {
-      const { image } = response;
-      let imageName = image.split("/").reverse()[0];
-      return fs.unlink("public/my-images/" + imageName, (err) => {
-        if (err) {
-          throw new Error("could not delete image");
-        }
-        console.log("deleted succesfully");
-      });
-    })
-    .then(() => {
-      res.status(200).send(JSON.stringify({ message: "deleted successfully" }));
+      if (!response) {
+        const error = new Error("post not found");
+        error.statusCode = 404;
+        throw error;
+      }
+      deleteFromFs(response);
+      return res
+        .status(200)
+        .send(JSON.stringify({ message: "deleted successfully" }));
     })
     .catch((err) => errorHandler(err, next));
 };
+
+function deleteFromFs(params) {
+  const { image } = params;
+  let imageName = image.split("/").reverse()[0];
+  return fs.unlink("public/my-images/" + imageName, (err) => {
+    if (err) {
+      throw new Error("could not delete image");
+    }
+  });
+}
