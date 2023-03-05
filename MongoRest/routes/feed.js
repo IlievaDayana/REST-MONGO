@@ -9,8 +9,9 @@ const {
 const router = express.Router();
 const cors = require("cors");
 const { body } = require("express-validator");
+const { authenticateToken } = require("../middlewaares/auth");
 
-router.get("/posts", getFeed);
+router.get("/posts",authenticateToken, getFeed);
 router.get("/posts/:postId", getPost);
 
 router.post(

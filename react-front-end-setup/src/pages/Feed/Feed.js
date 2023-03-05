@@ -22,17 +22,17 @@ class Feed extends Component {
   };
 
   componentDidMount() {
-    fetch("http://localhost:3001/feed/posts")
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error("Failed to fetch user status.");
-        }
-        return res.json();
-      })
-      .then((resData) => {
-        this.setState({ status: resData.status });
-      })
-      .catch(this.catchError);
+    // fetch("http://localhost:3001/feed/posts")
+    //   .then((res) => {
+    //     if (res.status !== 200) {
+    //       throw new Error("Failed to fetch user status.");
+    //     }
+    //     return res.json();
+    //   })
+    //   .then((resData) => {
+    //     this.setState({ status: resData.status });
+    //   })
+    //   .catch(this.catchError);
 
     this.loadPosts();
   }
@@ -50,7 +50,9 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch("http://localhost:3001/feed/posts?page=" + this.state.postPage)
+    fetch("http://localhost:3001/feed/posts?page=" + this.state.postPage, {
+      headers: { Authentication: `Bearer ${localStorage.getItem('token')}` },
+    })
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");

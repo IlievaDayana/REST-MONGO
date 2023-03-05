@@ -49,7 +49,6 @@ exports.login = (req, res, next) => {
       if (isValidPassword) {
         const data = { token: generateAccessToken(email), userId };
         res.status(201).send(JSON.stringify(data));
-        next();
       }
     })
     .catch((err) => errorHandler(err, next));
